@@ -12,8 +12,10 @@ cd dist
 # 如果你要部署到自定义域名
 # echo 'www.example.com' > CNAME
 
-git init
-git checkout -b main
+# 第一次运行要初始化
+# git init
+# 如果远端已有main分支，则不用运行
+# git checkout -b main
 git add -A
 git commit -m 'deploy'
 
