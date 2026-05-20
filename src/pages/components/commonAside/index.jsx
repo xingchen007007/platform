@@ -32,6 +32,8 @@ const CommonAside = ({ collapsed }) => {
     const dispatch = useDispatch();
     const currentMenu = useSelector(state=>state.tab.currentMenu);
     const selectMenu = (e) => {
+        //如果当前导航被重复点击，则无效果，不更新状态
+        if(e.key===currentMenu.path) return;
         let data;
         for (let item of MenuConfig) {
             if (item.path === e.keyPath[e.keyPath.length - 1]) {

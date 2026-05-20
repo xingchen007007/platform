@@ -3,6 +3,7 @@ import { Button, Form, Input, Table, Popconfirm, Modal, InputNumber, Select, Dat
 import './user.css';
 import { getUserListData ,addUser,editUser,deleteUser} from '../../api';
 import dayjs from 'dayjs';
+import { useLoaderData } from 'react-router-dom';
 
 const MODAL_TYPE = {
     ADD: 'add',
@@ -14,7 +15,9 @@ const User = () => {
     //创建form实例
     const [form] = Form.useForm();
     const [search, setSearch] = useState({name:''});
-    const [tableData, setTableData] = useState([]);
+    const data = useLoaderData();
+    const [tableData, setTableData] = useState(data);
+    console.log("user页面的初始tableData:",tableData);
     const [modal, setModal] = useState({
         isModalOpen: false,
         type: MODAL_TYPE.ADD
@@ -79,7 +82,7 @@ const User = () => {
         })
     }
     //对话框关闭
-    const handleCancel = (e) => {
+    const handleCancel = () => {
         setModal({ isModalOpen: false, type: MODAL_TYPE.ADD });
         form.resetFields();
     }
@@ -143,12 +146,12 @@ const User = () => {
         });
     }
 
-    //页面渲染完成后加载页面数据
-    useEffect(() => {
-        getUserListData({name:''}).then(({ data }) => {
-            setTableData(data.list);
-        });
-    }, []);
+    useEffect(()=>{
+        console.log("userEffect 执行");
+        return ()=>{
+            console.log("userEffect 清理函数")
+        }
+    },[])
 
     return (
         <div >

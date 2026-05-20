@@ -1,10 +1,10 @@
-import {createElement, useEffect, useState } from "react";
+import {createElement } from "react";
 import './index.css';
 import { Row, Col, Card, Table } from "antd";
 import * as Icon from '@ant-design/icons';
-import { getData } from "../../api";
 import Echarts from '../components/Echarts/index';
 import { getAssetsFile } from "../../utils";
+import { useLoaderData } from "react-router-dom";
 
 //table数据
 const columns = [
@@ -66,51 +66,7 @@ const countData = [
 ];
 const iconToElement = (name)=>createElement(Icon[name]);
 const Home = () => {
-    const [tableData, setTableData] = useState([]);
-    const [lineData,setLineData] = useState(null);
-    const [barData,setBarData] = useState(null);
-    const [pieData,setPieData] = useState(null);
-    useEffect(() => {
-        //获取首页数据
-        getData().then(({data}) => {
-            const {tableData,orderData,userData,videoData} = data.data;
-            //处理折线图数据
-            const keys = Object.keys(orderData.data[0]);
-            const series=[];
-            keys.forEach(key=>{
-                series.push({
-                    name:key,
-                    type:"line",
-                    data:orderData.data.map((item)=>item[key])
-                })
-            });
-            setTableData(tableData);
-            setLineData({xData:orderData.date,series:series});
-            setBarData({
-                xData:userData.map(item=>item.date),
-                series:[
-                    {
-                        name:'新增用户',
-                        type:'bar',
-                        data: userData.map(item=>item.new)                  
-                    },
-                    {
-                        name:'活跃用户',
-                        type:'bar',
-                        data: userData.map(item=>item.active)
-                    }
-                ]
-            });
-            setPieData({
-                series:[
-                    {
-                        type:'pie',
-                        data:videoData,
-                    }
-                ]
-            });
-        });
-    }, []);
+    const {tableData,lineData,barData,pieData} = useLoaderData();
     return (
         <Row className="home">
             <Col span={8}>
