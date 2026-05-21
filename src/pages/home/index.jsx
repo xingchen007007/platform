@@ -1,5 +1,5 @@
 import {createElement } from "react";
-import './index.css';
+import './index.scss';
 import { Row, Col, Card, Table } from "antd";
 import * as Icon from '@ant-design/icons';
 import Echarts from '../components/Echarts/index';

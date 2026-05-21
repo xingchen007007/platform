@@ -27,13 +27,13 @@ const config = [
         children: [
             {
                 path: '/other/pageOne',
-                name: 'page1',
+                name: 'pageOne',
                 label: '页面1',
                 icon: 'SettingOutlined'
             },
             {
                 path: '/other/pageTwo',
-                name: 'page2',
+                name: 'pageTwo',
                 label: '页面2',
                 icon: 'SettingOutlined'
             }

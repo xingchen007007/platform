@@ -1,25 +1,43 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const INITIAL = {
-  path: '/home',
-  name: 'home',
-  label: '首页'
+import  CONFIG from "../../config/index";
+
+//依据location的pathnam进行INITIAL的设置
+function init(){
+  console.log("init函数执行,依据当前url设置菜单初始位置");
+  //没有登录，初始值就是首页，登陆后直接到首页
+  if(!localStorage.getItem('token')) return {
+    path:'/home',
+    name:'home',
+    label:'首页'
+  };
+  let path = window.location.pathname.replace("/platform","").split('/');
+  path.shift();
+  let target;
+  //依照二级菜单深度，没有递归
+  let url = '/'+path[0];
+  target = CONFIG.find(item=>item.path===url);
+  if(path.length>1){
+    url +='/'+path[1];
+    target = target.children.find(child=>child.path===url);
+  }
+  return {path:target.path,name:target.name,label:target.label};
 }
+const initial_current_menu = init();
+
+
 const tabsSlice = createSlice({
   name: 'tab',
   initialState: {
     isCollapse: false,
     //点击过的菜单列表，用于面包屑
-    tabList: [{ ...INITIAL }],
+    tabList: [{ ...initial_current_menu }],
     //当前选中的菜单
-    currentMenu: { ...INITIAL }
+    currentMenu: { ...initial_current_menu }
   },
   reducers: {
-    collapseMenu: state => {
-      // Redux Toolkit 允许在 reducers 中编写 "mutating" 逻辑。
-      // 它实际上并没有改变 state，因为使用的是 Immer 库，检测到“草稿 state”的变化并产生一个全新的
-      // 基于这些更改的不可变的 state。
-      state.isCollapse = !state.isCollapse;
+    collapseMenu:  (state, { payload: val })  => {
+      state.isCollapse = val;
     },
     selectMenuList: (state, { payload: val }) => {
       state.currentMenu = val;

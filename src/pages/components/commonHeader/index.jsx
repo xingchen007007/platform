@@ -4,15 +4,16 @@ import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
 } from '@ant-design/icons';
-import './index.css';
-import { useDispatch } from 'react-redux';
+import './index.scss';
+import { useDispatch, useSelector } from 'react-redux';
 import {collapseMenu} from '../../../store/reducers/tab';
 import { useNavigate } from 'react-router-dom';
 import { getAssetsFile } from '../../../utils';
 
 const {Header} = Layout;
 
-const CommonHeader = ({collapsed})=>{
+const CommonHeader = ()=>{
+  const collapsed = useSelector(state=>state.tab.isCollapse);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     function logOut(){
@@ -21,7 +22,7 @@ const CommonHeader = ({collapsed})=>{
       navigate('/login');
     }
     function handleClick(){
-        dispatch(collapseMenu());
+        dispatch(collapseMenu(!collapsed));
     }
 
     const items = [

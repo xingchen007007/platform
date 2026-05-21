@@ -1,5 +1,5 @@
 import { Button, Form, Input,message } from "antd";
-import './login.css';
+import './login.scss';
 import { getMenu } from "../../api";
 import { useNavigate,Navigate } from "react-router-dom";
 

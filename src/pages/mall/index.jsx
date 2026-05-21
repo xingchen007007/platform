@@ -1,6 +1,7 @@
 
 import { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
+import "./mall.scss"
 
 const Mall = () => {
     const userData = useLoaderData();
@@ -12,7 +13,7 @@ const Mall = () => {
         }
     },[])
     return (
-        <div>
+        <div className="mall">
             商品
         </div>
     )

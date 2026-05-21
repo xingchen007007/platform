@@ -1,0 +1,8 @@
+.common-tag{
+    padding: 10px;
+}
+.tag {
+    &:hover{
+        cursor: pointer;
+    }
+}

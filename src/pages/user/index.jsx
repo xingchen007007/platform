@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Form, Input, Table, Popconfirm, Modal, InputNumber, Select, DatePicker } from 'antd';
-import './user.css';
+import './user.scss';
 import { getUserListData ,addUser,editUser,deleteUser} from '../../api';
 import dayjs from 'dayjs';
 import { useLoaderData } from 'react-router-dom';

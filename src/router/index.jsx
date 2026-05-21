@@ -6,8 +6,9 @@ import User from "../pages/user/index";
 import PageOne from "../pages/other/pageOne";
 import PageTwo from "../pages/other/pageTwo";
 import Login from "../pages/login/index";
-import Sub from "./Sub";
 import { getData, getUserListData } from "../api";
+
+export const BASE_URL = "/platform";
 
 const routes = createBrowserRouter([
     {
@@ -112,14 +113,7 @@ const routes = createBrowserRouter([
                             const data = await getData();
                             console.log("pageTwo的loader", data);
                             return {}
-                        },
-                        children:[
-                            {
-                                index:true,
-                                loader:()=>{console.log("子组件执行loader");return{}},
-                                Component:Sub
-                            }
-                        ]
+                        }
                     }
                 ]
             }
@@ -133,7 +127,7 @@ const routes = createBrowserRouter([
             return {}
         }
     }
-], { basename: "/platform" });
+], { basename: BASE_URL });
 
 
 export default routes;

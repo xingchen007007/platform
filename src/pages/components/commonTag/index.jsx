@@ -1,5 +1,5 @@
 import { Space, Tag } from "antd";
-import './index.css';
+import './index.scss';
 import { useDispatch, useSelector } from "react-redux";
 import { closeTag,setCurrentMenu } from "../../../store/reducers/tab";
 import { useNavigate } from "react-router-dom";
