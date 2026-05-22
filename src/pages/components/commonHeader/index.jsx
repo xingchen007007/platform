@@ -8,6 +8,7 @@ import './index.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { collapseMenu } from '../../../store/reducers/tab';
 import { useNavigate } from 'react-router-dom';
+import {  getAssetsFile } from '../../../utils';
 
 const { Header } = Layout;
 
