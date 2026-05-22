@@ -11,8 +11,17 @@ function init(){
     name:'home',
     label:'首页'
   };
+  
   let path = window.location.pathname.replace("/platform","").split('/');
   path.shift();
+  //登录了，/和/login对应的是home
+  
+  if(path.length===1&&(path[0]===''||path[0]==='login'))
+    return {
+    path:'/home',
+    name:'home',
+    label:'首页'
+  };
   let target;
   //依照二级菜单深度，没有递归
   let url = '/'+path[0];
@@ -21,19 +30,23 @@ function init(){
     url +='/'+path[1];
     target = target.children.find(child=>child.path===url);
   }
+  
   return {path:target.path,name:target.name,label:target.label};
 }
 const initial_current_menu = init();
 
+console.log("initial_current_menu:",initial_current_menu);
 
 const tabsSlice = createSlice({
   name: 'tab',
   initialState: {
-    isCollapse: false,
-    //点击过的菜单列表，用于面包屑
+    isCollapse: true,
+    //点击过的菜单列表,用于面包屑
     tabList: [{ ...initial_current_menu }],
     //当前选中的菜单
-    currentMenu: { ...initial_current_menu }
+    currentMenu: { ...initial_current_menu },
+    //当前是pc端还是移动端,默认pc端
+    isPC:true
   },
   reducers: {
     collapseMenu:  (state, { payload: val })  => {
@@ -51,9 +64,12 @@ const tabsSlice = createSlice({
     },
     setCurrentMenu:(state,{payload:val})=>{
       state.currentMenu = val;
+    },
+    setIsPC:(state,{payload:val})=>{
+      state.isPC = val;
     }
   }
 });
-export const { collapseMenu, selectMenuList, closeTag,setCurrentMenu } = tabsSlice.actions;
+export const { collapseMenu, selectMenuList, closeTag,setCurrentMenu,setIsPC } = tabsSlice.actions;
 
 export default tabsSlice.reducer;

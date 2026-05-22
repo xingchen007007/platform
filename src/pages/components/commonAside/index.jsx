@@ -1,9 +1,9 @@
-import { createElement, useState } from 'react';
+import { createElement } from 'react';
 import { Menu, Layout } from 'antd';
 import * as Icon from '@ant-design/icons';
 import MenuConfig from '../../../config';
 import { useNavigate } from 'react-router-dom';
-import { collapseMenu, selectMenuList } from "../../../store/reducers/tab";
+import {  collapseMenu, selectMenuList, setIsPC } from "../../../store/reducers/tab";
 import { useDispatch, useSelector } from 'react-redux';
 import "./index.scss"
 
@@ -26,24 +26,13 @@ const createItems = (config) => {
 }
 
 const items = MenuConfig.map((v) => createItems(v));
-const PHONE_MENU_STYLES = {
-    item: {
-        paddingLeft: 6,
-        paddingRight: 6,
-    }
-}
-
 
 const CommonAside = () => {
+    const currentMenu = useSelector(state => state.tab.currentMenu);
     const collapsed = useSelector(state => state.tab.isCollapse);
+    const isPC = useSelector(state=>state.tab.isPC);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const currentMenu = useSelector(state => state.tab.currentMenu);
-    const [style, setStyle] = useState({
-        siderWidth: 200,
-        siderCollapsedWidth: 70,
-        menuStyles: {}
-    });
     const selectMenu = (e) => {
         //如果当前导航被重复点击，则无效果，不更新状态
         if (e.key === currentMenu.path) return;
@@ -64,36 +53,42 @@ const CommonAside = () => {
         navigate(e.key);
     }
     const handleBreakpoint = (e) => {
-        //触发断点，小于断点宽度则为true，大于断点宽度则为false
-        console.log("触发断点", e)
-        if (e) setStyle({ siderWidth: 100, siderCollapsedWidth: 50, menuStyles:PHONE_MENU_STYLES});
-        else setStyle({ siderWidth: 200, siderCollapsedWidth: 70,menuStyles: {}});
-        // dispatch(collapseMenu(e))
+        //触发断点，默认PC端
+        dispatch(setIsPC(!e));
+    }
+    const handleViewClick = ()=>{
+        //点击背景，关闭菜单栏
+        dispatch(collapseMenu(true));
+        document.documentElement.style.overflow="auto";
     }
 
     return (
-        <Sider
-            className='sider'
-            breakpoint='xs'
-            collapsedWidth={style.siderCollapsedWidth}
-            onBreakpoint={handleBreakpoint}
-            trigger={null}
-            collapsed={collapsed}
-            width={style.siderWidth}
-        >
-            <h3 className='app-name'>{collapsed ? "后台" : "后台管理"}</h3>
-            <Menu
-                tooltip={{ placement: 'right' }}
-                className='menu'
-                theme="dark"
-                mode="inline"
-                defaultSelectedKeys={['/home']}
-                selectedKeys={[currentMenu.path]}
-                items={items}
-                onClick={selectMenu}
-                styles={style.menuStyles}
-            />
-        </Sider>
+        <>
+            <Sider
+                className='sider'
+                //480px为断点
+                breakpoint='xs'
+                collapsedWidth={isPC?70:0}
+                onBreakpoint={handleBreakpoint}
+                trigger={null}
+                collapsed={collapsed}
+                // width={style.siderWidth}
+            >
+                <h3 className='app-name'>{collapsed ? "后台" : "后台管理"}</h3>
+                <Menu
+                    tooltip={{ placement: 'right' }}
+                    className='menu'
+                    theme="dark"
+                    mode="inline"
+                    defaultSelectedKeys={['/home']}
+                    selectedKeys={[currentMenu.path]}
+                    items={items}
+                    onClick={selectMenu}
+                    // styles={style.menuStyles}
+                />
+            </Sider>
+            {(!isPC&&!collapsed)&&<div className='mock-view' onClick={handleViewClick}>进行测试</div>}
+        </>
     )
 }
 export default CommonAside;
