@@ -1,5 +1,6 @@
 import * as echarts from 'echarts';
 import { useEffect, useRef } from 'react';
+import styles from "./index.module.scss";
 
 const axisOption = {
   // 图例文字颜色
@@ -54,34 +55,43 @@ const normalOption = {
 }
 
 //封装echarts
-const Echarts =({style,chartData,isAxisChart=true})=>{
+const Echarts =({style,chartData,isAxisChart=true,xAxisType='category'})=>{
     const ref = useRef();
     const echartObj = useRef(null);
     useEffect(()=>{
+      // console.log('初始化图表：',chartData);
+      echartObj.current = echarts.init(ref.current);
+      const fn = ()=>echartObj.current.resize();
+      window.addEventListener('resize', fn);
       if(chartData){
-        echartObj.current = echarts.init(ref.current);
-        let options;
+        // // 获取 ECharts 实例
+        // var myChart = echarts.init(document.getElementById('myChart'));
+        // // 监听窗口 resize 事件
+        let op;
        //设置options
        if(isAxisChart){
          //有坐标轴
          //设置X轴
-         axisOption.xAxis.data = chartData.xData;
-         axisOption.series = chartData.series;
-         options = axisOption;
+         op = {...axisOption};
+         op.xAxis.data = chartData.xData;
+         op.series = chartData.series;
+         op.xAxis.type = xAxisType;
        }else{
          //无坐标轴，例如饼图
-         normalOption.series = chartData.series;
-         options = normalOption;
+         op = {...normalOption};
+         op.series = chartData.series;
        }
-       echartObj.current.setOption(options);
+       echartObj.current.setOption(op);
       }
         return ()=>{
           //销毁实例
+          // console.log('销毁图表，释放资源');
+          window.removeEventListener('resize',fn);
           if(echartObj.current) echartObj.current.dispose();
         }
-    },[isAxisChart,chartData]);
+    },[isAxisChart,chartData,xAxisType]);
     return(
-        <div style={style} ref = {ref}>
+        <div style={style} ref = {ref} className={styles.container}>
         </div>
     )
 

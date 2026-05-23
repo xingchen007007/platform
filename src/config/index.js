@@ -7,19 +7,20 @@ const config = [
         url: '/home/index'
     },
     {
-        path: '/mall',
-        name: 'mall',
-        label: '商品管理',
-        icon: 'ShopOutlined',
-        url: '/mall/index'
-    },
-    {
         path: '/user',
         name: 'user',
         label: '用户管理',
         icon: 'UserOutlined',
         url: '/user/index'
     },
+    {
+        path: '/mall',
+        name: 'mall',
+        label: '商品管理',
+        icon: 'ShopOutlined',
+        url: '/mall/index'
+    },
+
     {
         path: '/other',
         label: '其他',

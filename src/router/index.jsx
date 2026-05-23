@@ -1,21 +1,22 @@
 import { createBrowserRouter, Navigate, redirect } from "react-router-dom";
-import Main from '../pages/main';
-import Home from '../pages/home/index';
-import Mall from "../pages/mall/index";
-import User from "../pages/user/index";
-import PageOne from "../pages/other/pageOne";
-import PageTwo from "../pages/other/pageTwo";
-import Login from "../pages/login/index";
+// import Main from '../pages/main';
+// import Home from '../pages/home/index';
+// import Mall from "../pages/mall/index";
+// import User from "../pages/user/index";
+// import PageOne from "../pages/other/pageOne";
+// import PageTwo from "../pages/other/pageTwo";
+// import Login from "../pages/login/index";
 import { getData, getUserListData } from "../api";
+import { lazy } from "react";
 
 export const BASE_URL = "/platform";
 
 const routes = createBrowserRouter([
     {
         path: "/",
-        Component: Main,
+        Component:lazy(()=>import('../pages/main')),
         loader: () => {
-            console.log("运行/下的加载器");
+            // console.log("运行/下的加载器");
             if (!localStorage.getItem('token')) return redirect('/login');
             return {};
         },
@@ -27,10 +28,11 @@ const routes = createBrowserRouter([
             },
             {
                 path: 'home',
-                Component: Home,
+                Component:lazy(()=>import('../pages/home/index')),
                 loader: async () => {
+                    if (!localStorage.getItem('token')) return {};
                     const data = await getData();
-                    console.log('运行home页面的加载器', data);
+                    // console.log('运行home页面的加载器', data);
                     const { tableData, orderData, userData, videoData } = data.data.data;
                     // console.log("data.data",data.data);
                     //处理折线图数据
@@ -74,10 +76,11 @@ const routes = createBrowserRouter([
             },
             {
                 path: 'mall',
-                Component: Mall,
+                Component:lazy(()=>import("../pages/mall/index")),
                 loader: async () => {
+                    if (!localStorage.getItem('token')) return {};
                     const data = await getData();
-                    console.log('运行mall页面的加载器');
+                    // console.log('运行mall页面的加载器',data);
                     // if(true){
                     //     console.log('重定向');
                     //     throw redirect('/home');
@@ -87,10 +90,11 @@ const routes = createBrowserRouter([
             },
             {
                 path: 'user',
-                Component: User,
+                Component: lazy(()=>import("../pages/user/index")),
                 loader: async () => {
+                    if (!localStorage.getItem('token')) return {};
                     const data = await getUserListData({ name: '' });
-                    console.log("运行user页面的加载器", data);
+                    // console.log("运行user页面的加载器", data);
                     return data.data.list;
                 }
             },
@@ -99,8 +103,9 @@ const routes = createBrowserRouter([
                 children: [
                     {
                         path: 'pageOne',
-                        Component: PageOne,
+                        Component:lazy(()=>import("../pages/other/pageOne")),
                         loader: async () => {
+                            if (!localStorage.getItem('token')) return {};
                             const data = await getData();
                             console.log("pageOne的loader", data);
                             return {}
@@ -108,8 +113,9 @@ const routes = createBrowserRouter([
                     },
                     {
                         path: "pageTwo",
-                        Component: PageTwo,
+                        Component: lazy(()=>import("../pages/other/pageTwo")),
                         loader: async () => {
+                            if (!localStorage.getItem('token')) return {};
                             const data = await getData();
                             console.log("pageTwo的loader", data);
                             return {}
@@ -120,12 +126,12 @@ const routes = createBrowserRouter([
         ]
     },
     {
-        path: "/login",
-        Component: Login,
-        loader: () => {
-            console.log('运行login页面加载器');
-            return {}
-        }
+        path:"/login",
+        Component: lazy(()=>import("../pages/login/index")) ,
+        // loader: () => {
+        //     console.log('运行login页面加载器');
+        //     return {}
+        // }
     }
 ], { basename: BASE_URL });
 

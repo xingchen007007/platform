@@ -54,6 +54,7 @@ const CommonAside = () => {
     }
     const handleBreakpoint = (e) => {
         //触发断点，默认PC端
+        if(!collapsed)  dispatch(collapseMenu(true));
         dispatch(setIsPC(!e));
     }
     const handleViewClick = ()=>{
@@ -67,7 +68,7 @@ const CommonAside = () => {
             <Sider
                 className='sider'
                 //480px为断点
-                breakpoint='xs'
+                breakpoint='lg'
                 collapsedWidth={isPC?70:0}
                 onBreakpoint={handleBreakpoint}
                 trigger={null}
@@ -87,7 +88,7 @@ const CommonAside = () => {
                     // styles={style.menuStyles}
                 />
             </Sider>
-            {(!isPC&&!collapsed)&&<div className='mock-view' onClick={handleViewClick}>进行测试</div>}
+            {(!isPC&&!collapsed)&&<div className='mock-view' onClick={handleViewClick}></div>}
         </>
     )
 }

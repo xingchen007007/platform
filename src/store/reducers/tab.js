@@ -4,7 +4,7 @@ import  CONFIG from "../../config/index";
 
 //依据location的pathnam进行INITIAL的设置
 function init(){
-  console.log("init函数执行,依据当前url设置菜单初始位置");
+  // console.log("init函数执行,依据当前url设置菜单初始位置");
   //没有登录，初始值就是首页，登陆后直接到首页
   if(!localStorage.getItem('token')) return {
     path:'/home',
@@ -35,11 +35,12 @@ function init(){
 }
 const initial_current_menu = init();
 
-console.log("initial_current_menu:",initial_current_menu);
+// console.log("initial_current_menu:",initial_current_menu);
 
 const tabsSlice = createSlice({
   name: 'tab',
   initialState: {
+    fullscreenLoading:false,
     isCollapse: true,
     //点击过的菜单列表,用于面包屑
     tabList: [{ ...initial_current_menu }],
@@ -62,14 +63,20 @@ const tabsSlice = createSlice({
       state.tabList = val.list;
       state.currentMenu = val.current;
     },
+    setTabList:(state,{payload:val})=>{
+      state.tabList = val;
+    },
     setCurrentMenu:(state,{payload:val})=>{
       state.currentMenu = val;
     },
     setIsPC:(state,{payload:val})=>{
       state.isPC = val;
-    }
+    },
+    setFullscreenLoading:(state,{payload:val})=>{
+      state.fullscreenLoading = val;
+    },
   }
 });
-export const { collapseMenu, selectMenuList, closeTag,setCurrentMenu,setIsPC } = tabsSlice.actions;
+export const { collapseMenu, selectMenuList, closeTag,setCurrentMenu,setIsPC,setFullscreenLoading,setTabList } = tabsSlice.actions;
 
 export default tabsSlice.reducer;

@@ -1,0 +1,69 @@
+.user {
+    display: flex;
+    flex-direction: column;
+    // justify-content: space-around;
+    // height: calc( 100vh - 106px);
+
+    .flex_box {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        .search {
+            width: 200px;
+        }
+    }
+
+    .table {
+        height: calc( 100vh - 178px);
+
+        // flex: auto;
+        :global{
+            
+
+            //设置包裹表格的所有层的高度为100%
+            .ant-table-wrapper {
+                height: 100%;
+    
+            }
+            .ant-spin{
+                height: 100%;
+            }
+    
+            //设置加载动画容器的高度为100%，确保在数据加载时显示的动画能覆盖整个表格区域
+            .ant-spin-nested-loading {
+                height: 100%;
+            }
+            //这个类通常用于包裹实际内容，在这里也设置了高度为100%，以保证内容区域正确地占据其容器的全部空间
+            .ant-spin-container {
+                height: 100%;
+            }
+            //表格的具体容器高度，含实际表格内容的部分，包括表头、表格主体
+            .ant-table-container {
+                height: 100%;
+            }
+    
+            //设置表格本身的高度为100%，使其充满.ant-table-container提供的空间
+            .ant-table {
+                 height: calc(100% - 64px);
+            }
+            // 表格主体部分，包含所有行和单元格的数据，不包含表头因此需要减去表头高度，具体数值看表头高度决定
+            .ant-table-body {
+                background-color: white;
+                height: calc(100% - 54px);
+            }
+                .ant-table-cell {
+                //  background-color: red;
+                 padding: 10px;
+             }
+        }
+
+    }
+}
+
+.option {
+    display: flex;
+}
+
+.editButton {
+    margin-right: 5px;
+}

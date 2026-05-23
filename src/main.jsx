@@ -16,3 +16,14 @@ createRoot(document.getElementById('root')).render(
     </Provider>
   </StrictMode>
 )
+
+window.onload = function(){
+  console.log('首屏加载时间：',performance.timing.domComplete - performance.timing.navigationStart);
+  //改写
+  const observer = new PerformanceObserver((list)=>{
+    list.getEntries().forEach(entry=>{
+      console.log('改写后的首屏加载时间：',entry.domComplete);
+    })
+  });
+  observer.observe({entryTypes:['navigation']})
+}

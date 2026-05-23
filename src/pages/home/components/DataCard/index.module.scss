@@ -1,0 +1,104 @@
+// .num {
+//     margin-left: 5px;
+//     display: flex;
+//     flex-wrap: wrap;
+//     justify-content: space-between;
+
+
+.container {
+    // width: 32%;
+    // margin-bottom: 20px;
+    // padding: 10px 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // width: 300px;
+    // margin: auto;
+    // padding: auto;
+
+    .icon_box {
+        // text-align: center;
+        // line-height: 85px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        border-radius: 5px;
+        // border-bottom-left-radius: 5px;
+    }
+
+    :global {
+        .ant-card-body {
+            display: flex;
+        }
+        .anticon {
+            font-size: 30px;
+        }
+    }
+
+    @media screen and (min-width: 1200px) {
+        .icon_box {
+            width: 80px;
+            height: 80px;
+        }
+
+        :global {
+            .ant-card-body {
+                padding: 10px 25px;
+            }
+        }
+    }
+
+    @media screen and (max-width: 1199px) and (min-width: 768px) {
+        .icon_box {
+            width: 60px;
+            height: 60px;
+        }
+                :global {
+            .ant-card-body {
+                padding: 10px 15px;
+            }
+        }
+
+    }
+
+    @media screen and (max-width: 767px) {
+        .icon_box {
+            width: 80px;
+            height: 80px;
+        }
+
+        :global {
+            .ant-card-body {
+                padding: 10px 10px;
+            }
+        }
+    }
+
+
+
+    .detail {
+        width: 120px;
+        margin-left: 15px;
+        // display: flex;
+        // flex-direction: column;
+        // justify-content: center;
+
+        .num {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .txt {
+            font-size: 14px;
+            // text-align: center;
+            color: #999999;
+        }
+
+
+    }
+
+}
+
+
+// }

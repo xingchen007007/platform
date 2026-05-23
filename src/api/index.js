@@ -8,12 +8,13 @@ export const getData = () => {
     });
 }
 
-export const getUserListData = (params) => {
-    return http.request({
+export const getUserListData = async (params) => {
+    const res = await http.request({
         url: "/user/getUser",
         method: 'get',
         params
     });
+    return res;
 }
 export const addUser = (data) => {
     return http.request({

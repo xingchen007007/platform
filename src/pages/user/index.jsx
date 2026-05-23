@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
-import { Button, Form, Input, Table, Popconfirm, Modal, InputNumber, Select, DatePicker } from 'antd';
-import './user.scss';
-import { getUserListData ,addUser,editUser,deleteUser} from '../../api';
+import { useState } from 'react';
+import { Button, Form, Input, Table, Popconfirm, Modal, InputNumber, Select, DatePicker, message } from 'antd';
+import { getUserListData, addUser, editUser, deleteUser } from '../../api';
 import dayjs from 'dayjs';
 import { useLoaderData } from 'react-router-dom';
+import { debounce } from '../../utils';
+import { useDispatch } from 'react-redux';
+import { setFullscreenLoading } from '../../store/reducers/tab';
+import styles from  './user.module.scss';
 
 const MODAL_TYPE = {
     ADD: 'add',
@@ -14,18 +17,20 @@ const MODAL_TYPE = {
 const User = () => {
     //创建form实例
     const [form] = Form.useForm();
-    const [search, setSearch] = useState({name:''});
+    const [messageApi, contextHolder] = message.useMessage();
+    const [search, setSearch] = useState({ name: '' });
     const data = useLoaderData();
     const [tableData, setTableData] = useState(data);
-    console.log("user页面的初始tableData:",tableData);
+    const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
     const [modal, setModal] = useState({
         isModalOpen: false,
         type: MODAL_TYPE.ADD
     });
     //点击新增或编辑按钮
-    const handleClick = (type, rowData ) => {
+    const handleClick = (type, rowData) => {
         setModal({ isModalOpen: true, type });
-        if(type===MODAL_TYPE.EDIT){
+        if (type === MODAL_TYPE.EDIT) {
             //先对当前行的数据进行深拷贝，不要改变原始数据
             const cloneData = JSON.parse(JSON.stringify(rowData));
             cloneData.birth = dayjs(cloneData.birth);
@@ -34,51 +39,67 @@ const User = () => {
         }
     }
     //提交
-    const handleFinish = (e) => {
-        setSearch({  name: e.keyword });
-        getUserListData({  name: e.keyword }).then(({ data }) => {
-            setTableData(data.list);
-        });
-    }
+    // const handleFinish = (e) => {
+    //     setSearch({  name: e.keyword });
+    //     getUserListData({  name: e.keyword }).then(({ data }) => {
+    //         setTableData(data.list);
+    //     });
+    // }
     //删除
-    const handleDelete = ({id}) => {
-        deleteUser({id}).then(({data})=>{
-            const {message}  = data;
-            console.log('删除用户成功：',message);
+    const handleDelete = ({ id }) => {
+        // dispatch(setFullscreenLoading(true));
+        setLoading(true);
+        deleteUser({ id }).then(({ data }) => {
+            const { message } = data;
+            messageApi.open({type:'success',content:message});
             getTableData();
+        }).catch((err) => {
+            messageApi.open({ type: 'error', content: err });
+            setLoading(false);
         })
     }
     //对话框确认
     const handleModelOk = () => {
         //表单校验
-        form.validateFields().then((formData)=>{
+        form.validateFields().then((formData) => {
             //校验通过，封装数据，发送请求，清空form，隐藏model，
             //日期处理
             formData.birth = dayjs(formData.birth).format('YYYY-MM-DD');
-            console.log('表单校验通过',formData);
-            if(modal.type===MODAL_TYPE.ADD){
+            // setLoading(true);
+             dispatch(setFullscreenLoading(true));
+            if (modal.type === MODAL_TYPE.ADD) {
                 //新增用户
-                addUser(formData).then(({data})=>{
-                    const {message} = data.data;
+                addUser(formData).then(({ data }) => {
+                    const { message } = data.data;
                     //1.加载动画，防止用户交互，等待返回结果，失败则停留在表单页
                     //2.不管结果，结果后续通知，直接关闭modal然后清空表单
-                    console.log('新增成功的返回结果：',message);
+                    messageApi.open({type:'success',content:message});
                     //关闭modal，重新加载列表数据
                     handleCancel();
                     getTableData();
-                });
-            }else{
+                }).catch((err) => {
+                    messageApi.open({ type: 'error', content: err });
+                    // setLoading(false);
+                     
+                }).finally(()=> dispatch(setFullscreenLoading(false)))
+
+            } else {
                 //编辑用户
-                editUser(formData).then(({data})=>{
-                    const {message} = data.data;
-                    console.log('编辑成功的返回结果：',message);
+                editUser(formData).then(({ data }) => {
+                    const { message } = data.data;
+                    messageApi.open({type:'success',content:message});
                     handleCancel();
                     getTableData();
-                });
+                }).catch((err) => {
+                    messageApi.open({ type: 'error', content: err });
+                    // setLoading(false);
+
+                }).finally(()=>dispatch(setFullscreenLoading(false)))
             }
 
-        }).catch((err)=>{
-            console.log(err)
+        }).catch((err) => {
+            // console.log("校验不通过",err);
+            messageApi.open({type:'error',content:err.message});
         })
     }
     //对话框关闭
@@ -91,7 +112,8 @@ const User = () => {
         {
             title: '姓名',
             dataIndex: 'name',
-            width: 100
+            width: 100,
+            fixed: "start"
         },
         {
             title: '年龄',
@@ -107,7 +129,7 @@ const User = () => {
         {
             title: '出生日期',
             dataIndex: 'birth',
-            width: 200
+            width: 150
         },
         {
             title: '地址',
@@ -116,12 +138,13 @@ const User = () => {
         },
         {
             title: '操作',
-            width: 200,
+            width: 150,
+            fixed: "end",
             render: (rowData) => {
 
                 return (
-                    <div className='option'>
-                        <Button className='editButton' onClick={() => handleClick(MODAL_TYPE.EDIT, rowData)}>编辑</Button>
+                    <div className={styles.option}>
+                        <Button className={styles.editButton} onClick={() => handleClick(MODAL_TYPE.EDIT, rowData)}>编辑</Button>
                         <Popconfirm
                             title="提示"
                             description="此操作将删除该用户，是否继续？"
@@ -140,40 +163,62 @@ const User = () => {
 
     ]
 
-    const getTableData = ()=>{
-        getUserListData(search).then(({ data }) => {
-            setTableData(data.list);
-        });
+    const getTableData = () => {
+        setLoading(true);
+        getUserListData(search)
+            .then(({ data }) => {
+                setTableData(data.list);
+            })
+            .catch((err) => messageApi.open({ type: 'error', content: err }))
+            .finally(() => setLoading(false));
     }
 
-    useEffect(()=>{
-        console.log("userEffect 执行");
-        return ()=>{
-            console.log("userEffect 清理函数")
-        }
-    },[])
+    
 
+    //用户输入，防抖，延迟500ms请求数据
+    const handleoOnChange = debounce((e) => {
+        if(!loading)setLoading(true);
+        setSearch({ name: e.target.value });
+        getUserListData({ name: e.target.value }).then(({ data }) => {
+            setTableData(data.list);
+        }).catch((err)=>{
+            messageApi.open({type:'error',content:err});
+        }).finally(()=>setLoading(false))
+    }, 500);
     return (
-        <div >
-            <div className='flex-box'>
-                <Button type='primary' onClick={() => handleClick(MODAL_TYPE.ADD)}>+新增</Button>
-                <Form
-                    layout='inline'
-                    onFinish={handleFinish}
-                >
-                    <Form.Item name='keyword'>
-                        <Input placeholder='请输入用户名' />
-                    </Form.Item>
-                    <Form.Item >
-                        <Button type='primary' htmlType='submit'>搜索</Button>
-                    </Form.Item>
-                </Form>
+        <>
+            {contextHolder}
+            <div className={styles.user}>
+                <div className={styles.flex_box}>
+                    <Button type='primary' onClick={() => handleClick(MODAL_TYPE.ADD)}>+新增</Button>
+                    <Input className={styles.search} placeholder='请输入用户名' onChange={handleoOnChange} />
+                    {/* <Form
+                        layout='inline'
+                        onFinish={handleFinish}
+                    >
+                        <Form.Item name='keyword'>
+                        </Form.Item>
+                        <Form.Item >
+                            <Button type='primary' htmlType='submit'>搜索</Button>
+                        </Form.Item>
+                    </Form> */}
+                </div>
+                <div className={styles.table}>
+                    <Table
+                        rowKey={'id'}
+                        dataSource={tableData}
+                        columns={columns}
+                        pagination={{ pageSize: 15 }}
+                        loading={loading}
+
+                        scroll={{
+                            x: '100%',
+                            y: '100%',
+                        }}
+
+                    />
+                </div>
             </div>
-            <Table
-                rowKey={'id'}
-                dataSource={tableData}
-                columns={columns}
-            />
             <Modal
                 title={modal.type === MODAL_TYPE.ADD ? '新增用户' : '编辑用户'}
                 // closable={{ 'aria-label': 'Custom Close Button' }}
@@ -191,54 +236,54 @@ const User = () => {
                     labelAlign="left"
                 >
                     {
-                        modal.type===MODAL_TYPE.EDIT&&
+                        modal.type === MODAL_TYPE.EDIT &&
                         <Form.Item
                             name='id'
                             hidden
                         >
-                            <Input/>
+                            <Input />
                         </Form.Item>
                     }
                     <Form.Item
                         label="姓名"
                         name="name"
-                        rules={[{required:true,message:'请输入姓名'}]}
+                        rules={[{ required: true, message: '请输入姓名' }]}
                     >
-                        
-                    <Input placeholder='请输入姓名'/>
+
+                        <Input placeholder='请输入姓名' />
                     </Form.Item>
                     <Form.Item
                         label="年龄"
                         name="age"
                         rules={[
                             {
-                                required:true,
-                                message:'请输入年龄'
+                                required: true,
+                                message: '请输入年龄'
                             },
                             {
-                                type:'number',
-                                message:'年龄必须是数字'
+                                type: 'number',
+                                message: '年龄必须是数字'
                             }
                         ]}
                     >
-                        
-                    <InputNumber placeholder='请输入年龄'/>
+
+                        <InputNumber placeholder='请输入年龄' />
                     </Form.Item>
                     <Form.Item
                         label="性别"
                         name="sex"
-                        rules={[{required:true,message:'请选择性别'}]}
+                        rules={[{ required: true, message: '请选择性别' }]}
                     >
                         <Select
                             placeholder="请选择性别"
                             options={[
                                 {
-                                    value:0,
-                                    label:'男'
+                                    value: 0,
+                                    label: '男'
                                 },
                                 {
-                                    value:1,
-                                    label:'女'
+                                    value: 1,
+                                    label: '女'
                                 }
                             ]}
                         />
@@ -246,21 +291,21 @@ const User = () => {
                     <Form.Item
                         label="出生日期"
                         name="birth"
-                        rules={[{required:true,message:'请选择出生日期'}]}
+                        rules={[{ required: true, message: '请选择出生日期' }]}
                     >
-                        <DatePicker placeholder='请选择出生日期' format="YYYY/MM/DD"/>
+                        <DatePicker placeholder='请选择出生日期' format="YYYY/MM/DD" />
                     </Form.Item>
                     <Form.Item
                         label="地址"
                         name="addr"
-                        rules={[{required:true,message:'请输入地址'}]}
+                        rules={[{ required: true, message: '请输入地址' }]}
                     >
-                        
-                    <Input placeholder='请输入地址'/>
+
+                        <Input placeholder='请输入地址' />
                     </Form.Item>
                 </Form>
             </Modal>
-        </div>
+        </>
     )
 }
 

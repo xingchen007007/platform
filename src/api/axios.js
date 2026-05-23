@@ -2,7 +2,7 @@ import axios from 'axios';
 
 //生产环境、测试环境、开发环境改这个baseurl即可
 const baseURL= '/api';
-
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 //二次封装核心
 class HttpRequest {
     constructor(baseUrl) {
@@ -35,9 +35,10 @@ class HttpRequest {
         });
 
         // 添加响应拦截器
-        instance.interceptors.response.use(function (response) {
+        instance.interceptors.response.use(async function (response) {
             // 2xx 范围内的状态码都会触发该函数。
             // 对响应数据做点什么
+            await sleep(100);
             return response;
         }, function (error) {
             // 超出 2xx 范围的状态码都会触发该函数。
