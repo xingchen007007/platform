@@ -1,0 +1,1 @@
+import{c as e,l as t,t as n}from"./index-Czc9eD0H.js";var r=n(),i=()=>{let n=t();return console.log(`pageTwo`,n),(0,r.jsxs)(`div`,{children:[`第二个子页面`,(0,r.jsx)(e,{})]})};export{i as default};
