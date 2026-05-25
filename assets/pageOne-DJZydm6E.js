@@ -1,0 +1,1 @@
+import{l as e,t}from"./index-QnKEY_wp.js";var n=t(),r=()=>{let t=e();return console.log(`PageOne`,t),(0,n.jsx)(`div`,{children:`第一个子页面`})};export{r as default};

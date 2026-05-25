@@ -1,1 +1,0 @@
-import{t as e}from"./index-Czc9eD0H.js";var t=e(),n=()=>(0,t.jsx)(`div`,{className:`mall`,children:`商品`});export{n as default};

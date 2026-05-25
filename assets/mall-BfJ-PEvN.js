@@ -1,0 +1,1 @@
+import{t as e}from"./index-QnKEY_wp.js";var t={mall:`_mall_aeywh_1`,test:`_test_aeywh_1`},n=e(),r=()=>(0,n.jsx)(`div`,{className:t.mall,children:`商品`});export{r as default};
